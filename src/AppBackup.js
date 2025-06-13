@@ -362,13 +362,14 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
   const FLASH_DURATION = 250;    // Consistent flash duration
   const GAP_DURATION = 150;      // Gap between sequence flashes
 
-  // Circle positioning constants
+  // Responsive sizing for mobile
+  const isMobile = window.innerWidth < 600;
   const circleCount = 6;
-  const radius = 90;
-  const centerX = 130;
-  const centerY = 130;
-  const circleSize = 56;
-  const gap = 16;
+  const radius = isMobile ? 28 : 90;
+  const centerX = isMobile ? 80 : 130;
+  const centerY = isMobile ? 80 : 130;
+  const circleSize = isMobile ? 48 : 56;
+  const gap = isMobile ? 8 : 16;
 
   const positions = React.useMemo(() => {
     return Array.from({ length: circleCount }, (_, i) => {
@@ -378,7 +379,7 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
         y: centerY + Math.sin(angle) * (radius + gap)
       };
     });
-  }, []);
+  }, [isMobile]);
 
   const generateSequence = (length) => {
     const seq = [];
@@ -467,9 +468,9 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
   };
 
   return (
-    <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-      <h1 className="headline" style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
-      <div style={{ position: 'relative', width: 260, height: 260, margin: '32px 0', zIndex: 2, cursor: 'crosshair' }}>
+    <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none' }}>
+      <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 18 : 24, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
+      <div style={{ position: 'relative', width: isMobile ? 180 : 260, height: isMobile ? 180 : 260, margin: isMobile ? '16px 0' : '32px 0', zIndex: 2, cursor: 'crosshair', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none' }}>
         {Array.from({length: 6}).map((_, i) => {
           let color = BASE_COLOR;
           if ((memoryStep === 'show' && memorySequence[memoryFlashIndex] === i) || i === flashingCircle) {
@@ -481,6 +482,8 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
             top: positions[i].y - circleSize / 2,
             width: circleSize,
             height: circleSize,
+            minWidth: 44,
+            minHeight: 44,
             borderRadius: '50%',
             background: color,
             boxShadow: `0 0 24px ${color}`,
@@ -489,6 +492,10 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
             transition: 'box-shadow 0.2s, background 0.2s',
             zIndex: 2,
             pointerEvents: memoryStep === 'input' ? 'auto' : 'none',
+            touchAction: 'manipulation',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            MozUserSelect: 'none',
           };
 
           return (
@@ -502,7 +509,7 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
         })}
       </div>
       {memoryStep === 'result' && (
-        <div style={{ fontSize: 24, color: memoryResult ? '#00ff88' : '#ff4444', textShadow: `0 0 8px ${memoryResult ? '#00ff88' : '#ff4444'}`, marginTop: 16 }}>
+        <div style={{ fontSize: isMobile ? 28 : 32, color: memoryResult ? '#00ff88' : '#ff4444', textShadow: `0 0 8px ${memoryResult ? '#00ff88' : '#ff4444'}`, marginTop: 16 }}>
           {memoryResult ? result.toFixed(3) + 's' : 'wrong'}
         </div>
       )}
@@ -516,8 +523,8 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
               borderRadius: 8,
               fontWeight: 700,
               fontFamily: 'Roboto, sans-serif',
-              fontSize: 14,
-              padding: '8px 32px',
+              fontSize: isMobile ? 18 : 14,
+              padding: isMobile ? '12px 32px' : '8px 32px',
               boxShadow: 'none',
               cursor: 'pointer',
               outline: 'none',
@@ -538,8 +545,8 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
               borderRadius: 8,
               fontWeight: 700,
               fontFamily: 'Roboto, sans-serif',
-              fontSize: 14,
-              padding: '8px 32px',
+              fontSize: isMobile ? 18 : 14,
+              padding: isMobile ? '12px 32px' : '8px 32px',
               boxShadow: 'none',
               cursor: 'pointer',
               outline: 'none',
@@ -560,8 +567,8 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
               borderRadius: 8,
               fontWeight: 700,
               fontFamily: 'Roboto, sans-serif',
-              fontSize: 14,
-              padding: '8px 32px',
+              fontSize: isMobile ? 18 : 14,
+              padding: isMobile ? '12px 32px' : '8px 32px',
               boxShadow: 'none',
               cursor: 'pointer',
               outline: 'none',
