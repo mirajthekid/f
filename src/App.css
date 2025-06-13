@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-family: 'Roboto', sans-serif;
+}
+
+.app-bg {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 1s ease;
+}
+
+.center {
+  text-align: center;
+}
+
+.headline {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 0 3px #fff;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 40px;
+  padding-right: 8px;
+  animation: glowIn 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.username-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.input, .username-input {
+  padding: 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 20px;
+  background: #000;
+  color: #fff;
+  outline: none;
+  box-shadow: none;
+  margin: 0;
+  transition: box-shadow 0.2s;
+  width: 180px;
+  vertical-align: middle;
+  text-align: left;
+  text-shadow: 0 0 3px #fff;
+  line-height: 40px;
+  caret-color: #fff;
+  font-weight: 400;
+}
+.input:focus, .username-input:focus {
+  box-shadow: 0 0 8px #fff;
+}
+
+.game-btn {
+  background: #00ff88;
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 2rem;
+  cursor: pointer;
+  box-shadow: 0 0 12px #00ff88, 0 0 2px #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.game-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px #00ff88, 0 0 4px #fff;
+}
+
+.leaderboard-mini {
+  font-size: 12px;
+  background: #111;
+  border-radius: 12px;
+  color: #fff;
+}
+
+/* For Webkit browsers (Chrome, Edge, Safari) */
+.input::-webkit-input-caret, .username-input::-webkit-input-caret {
+  width: 3px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowIn {
+  from { text-shadow: 0 0 0 #fff, 0 0 0 #00ff88; }
+  to { text-shadow: 0 0 8px #fff, 0 0 2px #00ff88; }
+}
