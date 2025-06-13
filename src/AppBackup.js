@@ -8,8 +8,9 @@ const UsernameScreen = ({ onSubmit }) => {
   return (
     <div 
       className="app-bg center fade-in username-row" 
-      style={{gap: '1px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', margin: 0, padding: 0, minHeight: '100vh'}}
+      style={{gap: '1px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', margin: 0, padding: 0, minHeight: '100vh', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none'}}
       onClick={() => inputRef.current?.focus()}
+      onTouchStart={() => inputRef.current?.focus()}
     >
       <h1 className="headline" style={{ color: '#fff', textShadow: '0 0 3px #fff', fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 10, margin: 0, letterSpacing: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, paddingLeft: 8 }}>
         enter username:
@@ -263,9 +264,19 @@ const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
                       setTimeout(() => setStep('result'), 400);
                     }
                   }}
+                  onTouchStart={() => {
+                    if (!oddCountdownActive && isOdd && oddStartTime) {
+                      setOddResult(((Date.now() - oddStartTime) / 1000));
+                      setTimeout(() => setStep('result'), 400);
+                    }
+                  }}
                   style={{
                     ...style,
-                    cursor: 'crosshair'
+                    cursor: 'crosshair',
+                    touchAction: 'manipulation',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    MozUserSelect: 'none'
                   }}
                 />
               );
@@ -485,6 +496,7 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
               key={i}
               style={style}
               onClick={() => handleCircleClick(i)}
+              onTouchStart={() => handleCircleClick(i)}
             />
           );
         })}
@@ -681,11 +693,11 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     background: 'transparent',
     margin: '0 auto',
     touchAction: 'manipulation',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
     cursor: 'crosshair',
     WebkitTapHighlightColor: 'transparent',
-    MozUserSelect: 'none',
-    WebkitUserSelect: 'none',
-    userSelect: 'none',
     overflow: 'hidden',
     borderRadius: 16,
     boxSizing: 'border-box',
