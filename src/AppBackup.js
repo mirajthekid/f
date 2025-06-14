@@ -362,24 +362,27 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
   const FLASH_DURATION = 250;    // Consistent flash duration
   const GAP_DURATION = 150;      // Gap between sequence flashes
 
-  // Responsive sizing for mobile
-  const isMobile = window.innerWidth < 600;
+  // --- MOBILE-FIRST RESPONSIVE PATCH ---
+  // Use viewport units for all sizing
+  const vw = Math.max(window.innerWidth, 320);
+  const vh = Math.max(window.innerHeight, 480);
+  const isMobile = vw < 600;
+  const areaSize = isMobile ? Math.min(vw, vh) * 0.8 : 320;
   const circleCount = 6;
-  const radius = isMobile ? 28 : 90;
-  const centerX = isMobile ? 80 : 130;
-  const centerY = isMobile ? 80 : 130;
-  const circleSize = isMobile ? 48 : 56;
-  const gap = isMobile ? 8 : 16;
+  const radius = areaSize * 0.32;
+  const center = areaSize / 2;
+  const circleSize = areaSize * 0.18;
+  const gap = areaSize * 0.02;
 
   const positions = React.useMemo(() => {
     return Array.from({ length: circleCount }, (_, i) => {
       const angle = (Math.PI * 2 / circleCount) * i;
       return {
-        x: centerX + Math.cos(angle) * (radius + gap),
-        y: centerY + Math.sin(angle) * (radius + gap)
+        x: center + Math.cos(angle) * (radius + gap),
+        y: center + Math.sin(angle) * (radius + gap)
       };
     });
-  }, [isMobile]);
+  }, [areaSize]);
 
   const generateSequence = (length) => {
     const seq = [];
@@ -468,9 +471,9 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
   };
 
   return (
-    <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none' }}>
-      <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 18 : 24, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
-      <div style={{ position: 'relative', width: isMobile ? 180 : 260, height: isMobile ? 180 : 260, margin: isMobile ? '16px 0' : '32px 0', zIndex: 2, cursor: 'crosshair', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none' }}>
+    <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', padding: isMobile ? '2vh 0' : 0 }}>
+      <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 20 : 24, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
+      <div style={{ position: 'relative', width: areaSize, height: areaSize, margin: isMobile ? '2vh 0' : '32px 0', zIndex: 2, cursor: 'crosshair', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', background: 'rgba(0,0,0,0.2)', borderRadius: '50%', boxShadow: isMobile ? '0 0 16px #00ff8844' : '0 0 24px #00ff8844' }}>
         {Array.from({length: 6}).map((_, i) => {
           let color = BASE_COLOR;
           if ((memoryStep === 'show' && memorySequence[memoryFlashIndex] === i) || i === flashingCircle) {
@@ -486,7 +489,7 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
             minHeight: 44,
             borderRadius: '50%',
             background: color,
-            boxShadow: `0 0 24px ${color}`,
+            boxShadow: `0 0 16px ${color}`,
             cursor: memoryStep === 'input' ? 'pointer' : 'default',
             border: 'none',
             transition: 'box-shadow 0.2s, background 0.2s',
@@ -496,6 +499,9 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
             userSelect: 'none',
             WebkitUserSelect: 'none',
             MozUserSelect: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           };
 
           return (
