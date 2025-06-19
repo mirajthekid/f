@@ -5,12 +5,14 @@ const UsernameScreen = ({ onSubmit }) => {
   const [username, setUsername] = useState('');
   const inputRef = React.useRef(null);
 
+  React.useEffect(() => {
+    if (inputRef.current) inputRef.current.focus();
+  }, []);
+
   return (
     <div 
       className="app-bg center fade-in username-row" 
-      style={{gap: '1px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', margin: 0, padding: 0, minHeight: '100vh', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none'}}
-      onClick={() => inputRef.current?.focus()}
-      onTouchStart={() => inputRef.current?.focus()}
+      style={{gap: '1px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', margin: 0, padding: 0, minHeight: '100vh', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', width: '100vw', minWidth: '100vw', minHeight: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 1000}}
     >
       <h1 className="headline" style={{ color: '#fff', textShadow: '0 0 3px #fff', fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 10, margin: 0, letterSpacing: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, paddingLeft: 8 }}>
         enter username:
@@ -64,10 +66,21 @@ const ReactionGame = ({ onComplete, onNext }) => {
   const [step, setStep] = useState('wait');
   const [startTime, setStartTime] = useState(null);
   const [result, setResult] = useState(null);
+  const [tooFast, setTooFast] = useState(false); // NEW
   const timeoutRef = React.useRef(null);
+
+  const tooFastMessages = [
+    'a bit too fast there bud',
+    'too soon! wait for green.',
+    'patience, friend! not green yet.',
+    'oops! you jumped the gun.',
+    'hold on! wait for the green light.',
+    'not yet! try again when it’s green.'
+  ];
 
   const handleStart = () => {
     setStep('waitingForGreen');
+    setTooFast(false); // NEW
     const minDelay = 200;  // 0.2 seconds
     const maxDelay = 2400; // 2.4 seconds
     const randomDelay = minDelay + Math.random() * (maxDelay - minDelay);
@@ -83,13 +96,23 @@ const ReactionGame = ({ onComplete, onNext }) => {
         <h1 className="headline" style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 13, textTransform: 'lowercase' }}>
           tap when <span style={{ color: '#fff', fontSize: 14, textTransform: 'lowercase' }}>green</span> <span role="img" aria-label="green square">🟩</span>
         </h1>
-        <button className="start-btn" style={{ marginTop: 24, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }} onClick={handleStart} autoFocus>start</button>
+        <button className="start-btn" style={{ marginTop: 24, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }} onPointerDown={handleStart} autoFocus>start</button>
       </div>
     );
   }
 
   if (step === 'waitingForGreen') {
-    return <div className="app-bg center fade-in" style={{ background: '#000', color: '#fff', minHeight: '100vh' }} />;
+    return (
+      <div
+        className="app-bg center fade-in"
+        style={{ background: '#000', color: '#fff', minHeight: '100vh', cursor: 'pointer' }}
+        onPointerDown={() => {
+          setTooFast(true);
+          setStep('result');
+          clearTimeout(timeoutRef.current);
+        }}
+      />
+    );
   }
 
   if (step === 'ready') {
@@ -97,7 +120,7 @@ const ReactionGame = ({ onComplete, onNext }) => {
       <div
         className="app-bg center fade-in"
         style={{ background: '#00cc66', color: '#000', cursor: 'pointer' }}
-        onClick={() => {
+        onPointerDown={() => {
           const reaction = (Date.now() - startTime) / 1000;
           setResult(reaction);
           setStep('result');
@@ -108,23 +131,28 @@ const ReactionGame = ({ onComplete, onNext }) => {
   }
 
   if (step === 'result') {
+    const tooFastMsg = tooFastMessages[Math.floor(Math.random() * tooFastMessages.length)];
     return (
       <div className="app-bg center fade-in" style={{ position: 'relative' }}>
-        <h1 className="headline">your reaction time</h1>
-        <div style={{ fontSize: 32, color: '#00ff88', margin: '24px 0', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}>{result.toFixed(3)}s</div>
+        <h1 className="headline">{tooFast ? '' : 'your reaction time'}</h1>
+        <div style={{ fontSize: 32, color: tooFast ? '#ff4444' : '#00ff88', margin: '24px 0', textShadow: tooFast ? '0 0 8px #ff4444, 0 0 2px #ff4444' : '0 0 8px #00ff88, 0 0 2px #00ff88' }}>
+          {tooFast ? tooFastMsg : result.toFixed(3) + 's'}
+        </div>
         <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
           <button 
             style={{ marginTop: 0, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
-            onClick={() => { setStep('wait'); setResult(null); }}
+            onPointerDown={() => { setStep('wait'); setResult(null); setTooFast(false); }}
           >
             again
           </button>
-          <button 
-            style={{ marginTop: 0, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
-            onClick={onNext}
-          >
-            next game
-          </button>
+          {!tooFast && (
+            <button 
+              style={{ marginTop: 0, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onNext}
+            >
+              next game
+            </button>
+          )}
         </div>
       </div>
     );
@@ -258,13 +286,7 @@ const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
               return (
                 <div
                   key={i}
-                  onClick={() => {
-                    if (!oddCountdownActive && isOdd && oddStartTime) {
-                      setOddResult(((Date.now() - oddStartTime) / 1000));
-                      setTimeout(() => setStep('result'), 400);
-                    }
-                  }}
-                  onTouchStart={() => {
+                  onPointerDown={() => {
                     if (!oddCountdownActive && isOdd && oddStartTime) {
                       setOddResult(((Date.now() - oddStartTime) / 1000));
                       setTimeout(() => setStep('result'), 400);
@@ -311,7 +333,7 @@ const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
               textTransform: 'lowercase',
               textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
             }}
-            onClick={startGame}
+            onPointerDown={startGame}
           >
             again
           </button>
@@ -333,7 +355,7 @@ const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
               textTransform: 'lowercase',
               textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
             }}
-            onClick={onNext}
+            onPointerDown={onNext}
           >
             next game
           </button>
@@ -472,8 +494,8 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
 
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', padding: isMobile ? '2vh 0' : 0 }}>
-      <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 20 : 24, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
-      <div style={{ position: 'relative', width: areaSize, height: areaSize, margin: isMobile ? '2vh 0' : '32px 0', zIndex: 2, cursor: 'crosshair', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', background: 'rgba(0,0,0,0.2)', borderRadius: '50%', boxShadow: isMobile ? '0 0 16px #00ff8844' : '0 0 24px #00ff8844' }}>
+      <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 20 : 24, fontWeight: 700, letterSpacing: 0, textShadow: 'none', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
+      <div style={{ position: 'relative', width: areaSize, height: areaSize, margin: isMobile ? '2vh 0' : '32px 0', zIndex: 2, cursor: 'crosshair', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', background: 'rgba(0,0,0,0.2)', borderRadius: '50%' }}>
         {Array.from({length: 6}).map((_, i) => {
           let color = BASE_COLOR;
           if ((memoryStep === 'show' && memorySequence[memoryFlashIndex] === i) || i === flashingCircle) {
@@ -508,14 +530,13 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
             <div
               key={i}
               style={style}
-              onClick={() => handleCircleClick(i)}
-              onTouchStart={() => handleCircleClick(i)}
+              onPointerDown={() => handleCircleClick(i)}
             />
           );
         })}
       </div>
       {memoryStep === 'result' && (
-        <div style={{ fontSize: isMobile ? 28 : 32, color: memoryResult ? '#00ff88' : '#ff4444', textShadow: `0 0 8px ${memoryResult ? '#00ff88' : '#ff4444'}`, marginTop: 16 }}>
+        <div style={{ fontSize: isMobile ? 28 : 32, color: memoryResult ? '#00ff88' : '#ff4444', textShadow: memoryResult ? '0 0 8px #00ff88, 0 0 2px #00ff88' : 'none', marginTop: 16 }}>
           {memoryResult ? result.toFixed(3) + 's' : 'wrong'}
         </div>
       )}
@@ -539,7 +560,7 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
               textTransform: 'lowercase',
               textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
             }}
-            onClick={startGame}
+            onPointerDown={startGame}
           >
             again
           </button>
@@ -561,29 +582,7 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
               textTransform: 'lowercase',
               textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
             }}
-            onClick={onBack}
-          >
-            previous game
-          </button>
-          <button
-            style={{
-              background: 'transparent',
-              color: '#00ff88',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontFamily: 'Roboto, sans-serif',
-              fontSize: isMobile ? 18 : 14,
-              padding: isMobile ? '12px 32px' : '8px 32px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'box-shadow 0.2s',
-              letterSpacing: 0,
-              textTransform: 'lowercase',
-              textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
-            }}
-            onClick={onNext}
+            onPointerDown={onNext}
           >
             next game
           </button>
@@ -601,6 +600,7 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
   const [missed, setMissed] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [reaction, setReaction] = useState(null);
+  const [reactions, setReactions] = useState([]); // NEW: store all reaction times
   const minTimeout = 1000; // was 400
   const maxTimeout = 1800; // was 1000
   const radius = 32; // was 28
@@ -631,8 +631,6 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     const pos = getRandomPosition();
     setCircle({ ...pos, born: Date.now() });
     setStartTime(Date.now());
-    // Remove the timeout that auto-misses after timeoutMs
-    // The circle will disappear only if it shrinks to minimum size and is not tapped
   }
 
   // Animate shrinking
@@ -647,8 +645,8 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
   }, [playing, circle]);
   if (circle && circle.born) {
     const elapsed = Date.now() - circle.born;
-    const shrinkMs = timeoutMs * 1.3; // slow down shrink, more time to tap
-    const minR = 10;
+    const shrinkMs = timeoutMs * 0.6; // adjusted to shrink at a fast but more reasonable speed
+    const minR = 6;
     currentRadius = Math.max(minR, radius * (1 - elapsed / shrinkMs));
     if (currentRadius === minR) untappable = true;
   }
@@ -673,7 +671,9 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     if (dist <= radius) {
       // Success
       setScore(s => s + 1);
-      setReaction(Date.now() - startTime);
+      const thisReaction = Date.now() - startTime;
+      setReaction(thisReaction);
+      setReactions(arr => [...arr, thisReaction]); // NEW: add to array
       // Speed up, but not too fast
       setTimeoutMs(ms => Math.max(minTimeout, ms - 60));
       showCircle();
@@ -714,7 +714,8 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     overflow: 'hidden',
     borderRadius: 16,
     boxSizing: 'border-box',
-    boxShadow: '0 0 24px #00ff8844',
+    // Remove boxShadow from the tap the circle game area background
+    boxShadow: 'none',
     // For mobile landscape
     '@media (orientation: landscape)': {
       height: '80vw',
@@ -722,33 +723,42 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     }
   };
 
+  // Calculate average reaction time
+  const avgReaction = reactions.length > 0 ? (reactions.reduce((a, b) => a + b, 0) / reactions.length) : null;
+
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       <h1 className="headline" style={{ fontSize: 16 }}>tap the circle!</h1>
       {(!playing && !missed) && (
-        <button onClick={startGame} style={{ marginTop: 32, ...buttonStyle }}>start</button>
+        <button onPointerDown={startGame} style={{ marginTop: 32, ...buttonStyle }}>start</button>
       )}
       {playing && (
         <div 
           ref={gameAreaRef} 
           style={gameAreaStyle}
-          onMouseDown={e => e.preventDefault()} 
-          onClick={handleTap} 
-          onTouchStart={handleTap}
+          onPointerDown={handleTap}
         >
+          {/* Main circle */}
           {circle && (
             <div style={{ position: 'absolute', left: circle.x - currentRadius, top: circle.y - currentRadius, width: currentRadius * 2, height: currentRadius * 2, borderRadius: '50%', background: '#00ff88', boxShadow: '0 0 16px #00ff88', zIndex: 2, transition: 'width 0.05s, height 0.05s, left 0.05s, top 0.05s' }} />
           )}
         </div>
       )}
       {missed && (
-        <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>missed!<br />score: {score}</div>
+        <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
+          missed!<br />score: {score}
+          {avgReaction !== null && (
+            <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
+              avg reaction: {(avgReaction / 1000).toFixed(3)}s
+            </div>
+          )}
+        </div>
       )}
       {(missed || !playing) && (
         <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
-          <button onClick={startGame} style={buttonStyle}>again</button>
-          <button onClick={onBack} style={buttonStyle}>previous game</button>
-          <button onClick={onNext} style={buttonStyle}>next game</button>
+          <button onPointerDown={startGame} style={buttonStyle}>again</button>
+          <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
+          <button onPointerDown={onNext} style={buttonStyle}>next game</button>
         </div>
       )}
     </div>
