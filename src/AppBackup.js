@@ -730,7 +730,17 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       <h1 className="headline" style={{ fontSize: 16 }}>tap the circle!</h1>
       {(!playing && !missed) && (
-        <button onPointerDown={startGame} style={{ marginTop: 32, ...buttonStyle }}>start</button>
+        <h1 className="headline" style={{ fontSize: 16 }}>keep the circle alive</h1>
+      )}
+      {(!playing && missed) && (
+        <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
+          missed!<br />score: {score}
+          {avgReaction !== null && (
+            <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
+              avg reaction: {(avgReaction / 1000).toFixed(3)}s
+            </div>
+          )}
+        </div>
       )}
       {playing && (
         <div 
@@ -741,16 +751,6 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
           {/* Main circle */}
           {circle && (
             <div style={{ position: 'absolute', left: circle.x - currentRadius, top: circle.y - currentRadius, width: currentRadius * 2, height: currentRadius * 2, borderRadius: '50%', background: '#00ff88', boxShadow: '0 0 16px #00ff88', zIndex: 2, transition: 'width 0.05s, height 0.05s, left 0.05s, top 0.05s' }} />
-          )}
-        </div>
-      )}
-      {missed && (
-        <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
-          missed!<br />score: {score}
-          {avgReaction !== null && (
-            <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
-              avg reaction: {(avgReaction / 1000).toFixed(3)}s
-            </div>
           )}
         </div>
       )}
