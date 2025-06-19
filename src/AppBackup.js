@@ -729,7 +729,12 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       {(!playing && !missed) && (
-        <button onPointerDown={startGame} style={{ marginTop: 32, ...buttonStyle }}>start</button>
+        <>
+          <div style={{ color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 8, textAlign: 'center', textShadow: '0 0 3px #00ff88' }}>
+            keep the circle alive
+          </div>
+          <button onPointerDown={startGame} style={{ marginTop: 32, ...buttonStyle }}>start</button>
+        </>
       )}
       {playing && (
         <div 
