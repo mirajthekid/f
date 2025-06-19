@@ -612,8 +612,12 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
     const area = gameAreaRef.current?.getBoundingClientRect();
     if (!area) return { x: 100, y: 100 };
     const padding = radius + 10;
-    const x = Math.random() * (area.width - 2 * padding) + padding;
-    const y = Math.random() * (area.height - 2 * padding) + padding;
+    // For mobile, use the full screen height/width
+    const isMobile = window.innerWidth < 600;
+    const width = isMobile ? window.innerWidth : area.width;
+    const height = isMobile ? window.innerHeight : area.height;
+    const x = Math.random() * (width - 2 * padding) + padding;
+    const y = Math.random() * (height - 2 * padding) + padding;
     return { x, y };
   }
 
