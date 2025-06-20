@@ -795,7 +795,7 @@ export default function App() {
   const games = {
     username: <UsernameScreen onSubmit={handleUsernameSubmit} />,
     reaction: showLeaderboard === 'reaction' ? (
-      <Leaderboard game="reaction" onBack={() => setShowLeaderboard(null)} />
+      <Leaderboard game="reaction" onBack={() => setShowLeaderboard(null) || setCurrentGame('reaction')} />
     ) : (
       <ReactionGame 
         onNext={() => setCurrentGame('odd')}
@@ -804,7 +804,7 @@ export default function App() {
       />
     ),
     odd: showLeaderboard === 'odd' ? (
-      <Leaderboard game="odd" onBack={() => setShowLeaderboard(null)} />
+      <Leaderboard game="odd" onBack={() => setShowLeaderboard(null) || setCurrentGame('odd')} />
     ) : (
       <OddOneOutGame 
         onBack={() => setCurrentGame('reaction')} 
@@ -814,7 +814,7 @@ export default function App() {
       />
     ),
     memory: showLeaderboard === 'memory' ? (
-      <Leaderboard game="memory" onBack={() => setShowLeaderboard(null)} />
+      <Leaderboard game="memory" onBack={() => setShowLeaderboard(null) || setCurrentGame('memory')} />
     ) : (
       <MemoryGame
         onBack={() => setCurrentGame('odd')}
@@ -824,7 +824,7 @@ export default function App() {
       />
     ),
     tapcircle: showLeaderboard === 'tapcircle' ? (
-      <Leaderboard game="tapcircle" onBack={() => setShowLeaderboard(null)} />
+      <Leaderboard game="tapcircle" onBack={() => setShowLeaderboard(null) || setCurrentGame('tapcircle')} />
     ) : (
       <TapTheCircleGame
         onBack={() => setCurrentGame('memory')}
@@ -837,10 +837,9 @@ export default function App() {
 
   return (
     <>
-      <div style={{position:'fixed',top:0,left:0,width:'100vw',background:'#222',color:'#fff',zIndex:9999,textAlign:'center',fontWeight:900,fontSize:18,padding:8,letterSpacing:2}}>
-        MCP LEADERBOARD TEST MARKER
+      <div style={{ cursor: 'default' }}>
+        {games[currentGame] || null}
       </div>
-      {games[currentGame] || null}
     </>
   );
 }

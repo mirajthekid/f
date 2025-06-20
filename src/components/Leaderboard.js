@@ -8,7 +8,15 @@ export default function Leaderboard({ game, onBack }) {
   useEffect(() => {
     setLoading(true);
     fetchLeaderboard(game).then(data => {
-      setScores(data);
+      // For reaction, odd, memory: sort ascending (lower is better)
+      // For tapcircle: sort descending (higher is better)
+      let sorted = data;
+      if (game === 'tapcircle') {
+        sorted = [...data].sort((a, b) => b.score - a.score);
+      } else {
+        sorted = [...data].sort((a, b) => a.score - b.score);
+      }
+      setScores(sorted);
       setLoading(false);
     });
   }, [game]);
@@ -26,7 +34,7 @@ export default function Leaderboard({ game, onBack }) {
           {scores.map((entry, i) => (
             <li key={i} style={{ marginBottom: 4, fontWeight: i < 3 ? 700 : 400, color: i < 3 ? '#00ff88' : '#fff' }}>
               <span style={{ marginRight: 8 }}>{entry.username || 'anon'}</span>
-              <span style={{ color: '#00ff88' }}>{entry.score}</span>
+              <span style={{ color: '#00ff88' }}>{entry.score}{game === 'tapcircle' ? '' : ' ms'}</span>
             </li>
           ))}
         </ol>
