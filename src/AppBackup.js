@@ -92,6 +92,13 @@ const ReactionGame = ({ onComplete, onNext, username, onShowLeaderboard }) => {
     }, randomDelay);
   };
 
+  React.useEffect(() => {
+    if (step === 'result' && !tooFast && result && username) {
+      submitScore('reaction', username, parseFloat(result.toFixed(3)));
+    }
+    // eslint-disable-next-line
+  }, [step, tooFast, result, username]);
+
   if (step === 'wait') {
     return (
       <div className="app-bg center fade-in">
@@ -134,13 +141,6 @@ const ReactionGame = ({ onComplete, onNext, username, onShowLeaderboard }) => {
 
   if (step === 'result') {
     const tooFastMsg = tooFastMessages[Math.floor(Math.random() * tooFastMessages.length)];
-    // Submit score if not too fast and result exists
-    React.useEffect(() => {
-      if (!tooFast && result && username) {
-        submitScore('reaction', username, parseFloat(result.toFixed(3)));
-      }
-      // eslint-disable-next-line
-    }, [tooFast, result, username]);
     return (
       <div className="app-bg center fade-in" style={{ position: 'relative' }}>
         <h1 className="headline">{tooFast ? '' : 'your reaction time'}</h1>
@@ -217,6 +217,14 @@ const OddOneOutGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard
     }, 1000);
     return () => clearInterval(timer);
   }, [step]);
+
+  // Move this to the top level of OddOneOutGame
+  React.useEffect(() => {
+    if (step === 'result' && oddResult !== null && username) {
+      submitScore('odd', username, parseFloat(oddResult.toFixed(3)));
+    }
+    // eslint-disable-next-line
+  }, [step, oddResult, username]);
 
   const startGame = () => {
     const baseColor = '#00ff88';
@@ -327,13 +335,6 @@ const OddOneOutGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard
   }
 
   if (step === 'result') {
-    // Submit score if result exists
-    React.useEffect(() => {
-      if (oddResult !== null && username) {
-        submitScore('odd', username, parseFloat(oddResult.toFixed(3)));
-      }
-      // eslint-disable-next-line
-    }, [oddResult, username]);
     return (
       <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
         <h1 className="headline" style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase' }}>your time</h1>
@@ -490,7 +491,7 @@ const MemoryGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard })
     }
   };
 
-  // Place this at the top level of MemoryGame, after all state declarations
+  // Move this to the top level of MemoryGame
   React.useEffect(() => {
     if (memoryStep === 'result' && memoryResult && result && username) {
       submitScore('memory', username, parseFloat(result.toFixed(3)));
