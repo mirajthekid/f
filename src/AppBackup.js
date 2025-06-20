@@ -834,5 +834,12 @@ export default function App() {
     )
   };
 
-  return games[currentGame] || null;
+  return (
+    <>
+      <div style={{position:'fixed',top:0,left:0,width:'100vw',background:'#222',color:'#fff',zIndex:9999,textAlign:'center',fontWeight:900,fontSize:18,padding:8,letterSpacing:2}}>
+        MCP LEADERBOARD TEST MARKER
+      </div>
+      {games[currentGame] || null}
+    </>
+  );
 }
