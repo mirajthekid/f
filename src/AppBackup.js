@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
+import Leaderboard from './components/Leaderboard';
+import { submitScore } from './firebase';
 
 const UsernameScreen = ({ onSubmit }) => {
   const [username, setUsername] = useState('');
@@ -62,7 +64,7 @@ const UsernameScreen = ({ onSubmit }) => {
   );
 };
 
-const ReactionGame = ({ onComplete, onNext }) => {
+const ReactionGame = ({ onComplete, onNext, username, onShowLeaderboard }) => {
   const [step, setStep] = useState('wait');
   const [startTime, setStartTime] = useState(null);
   const [result, setResult] = useState(null);
@@ -132,6 +134,13 @@ const ReactionGame = ({ onComplete, onNext }) => {
 
   if (step === 'result') {
     const tooFastMsg = tooFastMessages[Math.floor(Math.random() * tooFastMessages.length)];
+    // Submit score if not too fast and result exists
+    React.useEffect(() => {
+      if (!tooFast && result && username) {
+        submitScore('reaction', username, parseFloat(result.toFixed(3)));
+      }
+      // eslint-disable-next-line
+    }, [tooFast, result, username]);
     return (
       <div className="app-bg center fade-in" style={{ position: 'relative' }}>
         <h1 className="headline">{tooFast ? '' : 'your reaction time'}</h1>
@@ -153,6 +162,14 @@ const ReactionGame = ({ onComplete, onNext }) => {
               next game
             </button>
           )}
+          {!tooFast && (
+            <button
+              style={{ marginTop: 0, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onShowLeaderboard}
+            >
+              show leaderboard
+            </button>
+          )}
         </div>
       </div>
     );
@@ -161,7 +178,7 @@ const ReactionGame = ({ onComplete, onNext }) => {
   return null;
 };
 
-const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
+const OddOneOutGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard }) => {
   const [step, setStep] = useState('playing');
   const [oddStartTime, setOddStartTime] = useState(null);
   const [oddResult, setOddResult] = useState(null);
@@ -310,54 +327,35 @@ const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
   }
 
   if (step === 'result') {
+    // Submit score if result exists
+    React.useEffect(() => {
+      if (oddResult !== null && username) {
+        submitScore('odd', username, parseFloat(oddResult.toFixed(3)));
+      }
+      // eslint-disable-next-line
+    }, [oddResult, username]);
     return (
       <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
         <h1 className="headline" style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase' }}>your time</h1>
         <div style={{ fontSize: 32, color: '#00ff88', margin: '24px 0', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}>{oddResult !== null ? oddResult.toFixed(3) + 's' : ''}</div>
         <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
           <button
-            style={{
-              background: 'transparent',
-              color: '#00ff88',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontFamily: 'Roboto, sans-serif',
-              fontSize: 14,
-              padding: '8px 32px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'box-shadow 0.2s',
-              letterSpacing: 0,
-              textTransform: 'lowercase',
-              textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
-            }}
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
             onPointerDown={startGame}
           >
             again
           </button>
           <button
-            style={{
-              background: 'transparent',
-              color: '#00ff88',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontFamily: 'Roboto, sans-serif',
-              fontSize: 14,
-              padding: '8px 32px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'box-shadow 0.2s',
-              letterSpacing: 0,
-              textTransform: 'lowercase',
-              textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
-            }}
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
             onPointerDown={onNext}
           >
             next game
+          </button>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onShowLeaderboard}
+          >
+            show leaderboard
           </button>
         </div>
       </div>
@@ -367,7 +365,7 @@ const OddOneOutGame = ({ onComplete, onBack, onNext }) => {
   return null;
 };
 
-const MemoryGame = ({ onComplete, onBack, onNext }) => {
+const MemoryGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard }) => {
   const [memorySequence, setMemorySequence] = useState([]);
   const [memoryStep, setMemoryStep] = useState('show');
   const [memoryUserInput, setMemoryUserInput] = useState([]);
@@ -492,6 +490,14 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
     }
   };
 
+  // Place this at the top level of MemoryGame, after all state declarations
+  React.useEffect(() => {
+    if (memoryStep === 'result' && memoryResult && result && username) {
+      submitScore('memory', username, parseFloat(result.toFixed(3)));
+    }
+    // eslint-disable-next-line
+  }, [memoryStep, memoryResult, result, username]);
+
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', padding: isMobile ? '2vh 0' : 0 }}>
       <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 20 : 24, fontWeight: 700, letterSpacing: 0, textShadow: 'none', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
@@ -536,63 +542,37 @@ const MemoryGame = ({ onComplete, onBack, onNext }) => {
         })}
       </div>
       {memoryStep === 'result' && (
-        <div style={{ fontSize: isMobile ? 28 : 32, color: memoryResult ? '#00ff88' : '#ff4444', textShadow: memoryResult ? '0 0 8px #00ff88, 0 0 2px #00ff88' : 'none', marginTop: 16 }}>
-          {memoryResult ? result.toFixed(3) + 's' : 'wrong'}
-        </div>
-      )}
-      {memoryStep === 'result' && (
-        <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
-          <button
-            style={{
-              background: 'transparent',
-              color: '#00ff88',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontFamily: 'Roboto, sans-serif',
-              fontSize: isMobile ? 18 : 14,
-              padding: isMobile ? '12px 32px' : '8px 32px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'box-shadow 0.2s',
-              letterSpacing: 0,
-              textTransform: 'lowercase',
-              textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
-            }}
-            onPointerDown={startGame}
-          >
-            again
-          </button>
-          <button
-            style={{
-              background: 'transparent',
-              color: '#00ff88',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontFamily: 'Roboto, sans-serif',
-              fontSize: isMobile ? 18 : 14,
-              padding: isMobile ? '12px 32px' : '8px 32px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'box-shadow 0.2s',
-              letterSpacing: 0,
-              textTransform: 'lowercase',
-              textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88'
-            }}
-            onPointerDown={onNext}
-          >
-            next game
-          </button>
-        </div>
+        <>
+          <div style={{ fontSize: isMobile ? 28 : 32, color: memoryResult ? '#00ff88' : '#ff4444', textShadow: memoryResult ? '0 0 8px #00ff88, 0 0 2px #00ff88' : 'none', marginTop: 16 }}>
+            {memoryResult ? result.toFixed(3) + 's' : 'wrong'}
+          </div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={startGame}
+            >
+              again
+            </button>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onNext}
+            >
+              next game
+            </button>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onShowLeaderboard}
+            >
+              show leaderboard
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
 };
 
-const TapTheCircleGame = ({ onBack, onNext }) => {
+const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
   const [playing, setPlaying] = useState(false);
   const [score, setScore] = useState(0);
   const [circle, setCircle] = useState(null); // {x, y}
@@ -726,6 +706,14 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
   // Calculate average reaction time
   const avgReaction = reactions.length > 0 ? (reactions.reduce((a, b) => a + b, 0) / reactions.length) : null;
 
+  // Place this at the top level of TapTheCircleGame, after all state declarations
+  React.useEffect(() => {
+    if (missed && score > 0 && username) {
+      submitScore('tapcircle', username, score);
+    }
+    // eslint-disable-next-line
+  }, [missed, score, username]);
+
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       {(!playing && !missed) && (
@@ -756,6 +744,12 @@ const TapTheCircleGame = ({ onBack, onNext }) => {
               avg reaction: {(avgReaction / 1000).toFixed(3)}s
             </div>
           )}
+          <button
+            style={{ marginTop: 16, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 32px', cursor: 'pointer', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onShowLeaderboard}
+          >
+            show leaderboard
+          </button>
         </div>
       )}
       {(missed || !playing) && (
@@ -790,6 +784,7 @@ const buttonStyle = {
 export default function App() {
   const [currentGame, setCurrentGame] = useState('username');
   const [username, setUsername] = useState('');
+  const [showLeaderboard, setShowLeaderboard] = useState(null); // game name or null
 
   const handleUsernameSubmit = (name) => {
     setUsername(name);
@@ -798,19 +793,45 @@ export default function App() {
 
   const games = {
     username: <UsernameScreen onSubmit={handleUsernameSubmit} />,
-    reaction: <ReactionGame onNext={() => setCurrentGame('odd')} />,
-    odd: <OddOneOutGame 
-      onBack={() => setCurrentGame('reaction')} 
-      onNext={() => setCurrentGame('memory')} 
-    />,
-    memory: <MemoryGame
-      onBack={() => setCurrentGame('odd')}
-      onNext={() => setCurrentGame('tapcircle')}
-    />,
-    tapcircle: <TapTheCircleGame
-      onBack={() => setCurrentGame('memory')}
-      onNext={() => setCurrentGame('username')}
-    />
+    reaction: showLeaderboard === 'reaction' ? (
+      <Leaderboard game="reaction" onBack={() => setShowLeaderboard(null)} />
+    ) : (
+      <ReactionGame 
+        onNext={() => setCurrentGame('odd')}
+        username={username}
+        onShowLeaderboard={() => setShowLeaderboard('reaction')}
+      />
+    ),
+    odd: showLeaderboard === 'odd' ? (
+      <Leaderboard game="odd" onBack={() => setShowLeaderboard(null)} />
+    ) : (
+      <OddOneOutGame 
+        onBack={() => setCurrentGame('reaction')} 
+        onNext={() => setCurrentGame('memory')} 
+        username={username}
+        onShowLeaderboard={() => setShowLeaderboard('odd')}
+      />
+    ),
+    memory: showLeaderboard === 'memory' ? (
+      <Leaderboard game="memory" onBack={() => setShowLeaderboard(null)} />
+    ) : (
+      <MemoryGame
+        onBack={() => setCurrentGame('odd')}
+        onNext={() => setCurrentGame('tapcircle')}
+        username={username}
+        onShowLeaderboard={() => setShowLeaderboard('memory')}
+      />
+    ),
+    tapcircle: showLeaderboard === 'tapcircle' ? (
+      <Leaderboard game="tapcircle" onBack={() => setShowLeaderboard(null)} />
+    ) : (
+      <TapTheCircleGame
+        onBack={() => setCurrentGame('memory')}
+        onNext={() => setCurrentGame('username')}
+        username={username}
+        onShowLeaderboard={() => setShowLeaderboard('tapcircle')}
+      />
+    )
   };
 
   return games[currentGame] || null;
