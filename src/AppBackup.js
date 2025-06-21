@@ -162,15 +162,9 @@ const ReactionGame = ({ onComplete, onNext, username, onShowLeaderboard }) => {
               next game
             </button>
           )}
-          {!tooFast && (
-            <button
-              style={{ marginTop: 0, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
-              onPointerDown={onShowLeaderboard}
-            >
-              show leaderboard
-            </button>
-          )}
         </div>
+        {/* Leaderboard always visible below buttons */}
+        {!tooFast && <div style={{ marginTop: 32 }}><Leaderboard game="reaction" /></div>}
       </div>
     );
   }
@@ -335,9 +329,40 @@ const OddOneOutGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard
   }
 
   if (step === 'result') {
+    if (!oddResult) {
+      return (
+        <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ fontSize: 32, color: '#ff4444', margin: '24px 0', textShadow: '0 0 8px #ff4444, 0 0 2px #ff4444' }}>
+            wrong
+          </div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={startGame}
+            >
+              again
+            </button>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onBack}
+            >
+              previous game
+            </button>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onNext}
+            >
+              next game
+            </button>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
-        <h1 className="headline" style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase' }}>your time</h1>
+        <h1 className="headline" style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0, textShadow: '0 0 3px #fff', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase' }}>
+          your time
+        </h1>
         <div style={{ fontSize: 32, color: '#00ff88', margin: '24px 0', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}>{oddResult !== null ? oddResult.toFixed(3) + 's' : ''}</div>
         <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
           <button
@@ -348,17 +373,19 @@ const OddOneOutGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard
           </button>
           <button
             style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onBack}
+          >
+            previous game
+          </button>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
             onPointerDown={onNext}
           >
             next game
           </button>
-          <button
-            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: 14, padding: '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
-            onPointerDown={onShowLeaderboard}
-          >
-            show leaderboard
-          </button>
         </div>
+        {/* Leaderboard always visible below buttons */}
+        <div style={{ marginTop: 32 }}><Leaderboard game="odd" /></div>
       </div>
     );
   }
@@ -499,6 +526,69 @@ const MemoryGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard })
     // eslint-disable-next-line
   }, [memoryStep, memoryResult, result, username]);
 
+  if (memoryStep === 'result' && memoryResult) {
+    // Only show result buttons and leaderboard on correct
+    return (
+      <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', padding: isMobile ? '2vh 0' : 0 }}>
+        <div style={{ fontSize: isMobile ? 28 : 32, color: '#00ff88', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88', marginTop: 16 }}>
+          {result.toFixed(3) + 's'}
+        </div>
+        <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={startGame}
+          >
+            again
+          </button>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onBack}
+          >
+            previous game
+          </button>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onNext}
+          >
+            next game
+          </button>
+        </div>
+        <div style={{ marginTop: 32 }}><Leaderboard game="memory" /></div>
+      </div>
+    );
+  }
+
+  if (memoryStep === 'result' && !memoryResult) {
+    return (
+      <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ fontSize: 32, color: '#ff4444', margin: '24px 0', textShadow: '0 0 8px #ff4444, 0 0 2px #ff4444' }}>
+          wrong
+        </div>
+        <div style={{ display: 'flex', gap: 16, marginTop: 24, justifyContent: 'center' }}>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={startGame}
+          >
+            again
+          </button>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onBack}
+          >
+            previous game
+          </button>
+          <button
+            style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+            onPointerDown={onNext}
+          >
+            next game
+          </button>
+        </div>
+        <div style={{ marginTop: 32 }}><Leaderboard game="memory" /></div>
+      </div>
+    );
+  }
+
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', touchAction: 'manipulation', userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', padding: isMobile ? '2vh 0' : 0 }}>
       <h1 className="headline" style={{ color: '#fff', fontSize: isMobile ? 20 : 24, fontWeight: 700, letterSpacing: 0, textShadow: 'none', margin: 0, display: 'inline-block', verticalAlign: 'middle', lineHeight: '20px', paddingRight: 8, textTransform: 'lowercase', zIndex: 2 }}>repeat the pattern</h1>
@@ -556,17 +646,18 @@ const MemoryGame = ({ onComplete, onBack, onNext, username, onShowLeaderboard })
             </button>
             <button
               style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
+              onPointerDown={onBack}
+            >
+              previous game
+            </button>
+            <button
+              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
               onPointerDown={onNext}
             >
               next game
             </button>
-            <button
-              style={{ background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontFamily: 'Roboto, sans-serif', fontSize: isMobile ? 18 : 14, padding: isMobile ? '12px 32px' : '8px 32px', boxShadow: 'none', cursor: 'pointer', outline: 'none', transition: 'box-shadow 0.2s', letterSpacing: 0, textTransform: 'lowercase', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
-              onPointerDown={onShowLeaderboard}
-            >
-              show leaderboard
-            </button>
           </div>
+          <div style={{ marginTop: 32 }}><Leaderboard game="memory" /></div>
         </>
       )}
     </div>
@@ -738,27 +829,22 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
         </div>
       )}
       {missed && (
-        <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
-          missed!<br />score: {score}
-          {avgReaction !== null && (
-            <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
-              avg reaction: {(avgReaction / 1000).toFixed(3)}s
-            </div>
-          )}
-          <button
-            style={{ marginTop: 16, background: 'transparent', color: '#00ff88', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 32px', cursor: 'pointer', textShadow: '0 0 8px #00ff88, 0 0 2px #00ff88' }}
-            onPointerDown={onShowLeaderboard}
-          >
-            show leaderboard
-          </button>
-        </div>
-      )}
-      {(missed || !playing) && (
-        <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
-          <button onPointerDown={startGame} style={buttonStyle}>again</button>
-          <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
-          <button onPointerDown={onNext} style={buttonStyle}>next game</button>
-        </div>
+        <>
+          <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
+            missed!<br />score: {score}
+            {avgReaction !== null && (
+              <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
+                avg reaction: {(avgReaction / 1000).toFixed(3)}s
+              </div>
+            )}
+          </div>
+          <div style={{ marginTop: 32 }}><Leaderboard game="tapcircle" /></div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
+            <button onPointerDown={startGame} style={buttonStyle}>again</button>
+            <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
+            <button onPointerDown={onNext} style={buttonStyle}>next game</button>
+          </div>
+        </>
       )}
     </div>
   );

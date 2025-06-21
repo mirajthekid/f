@@ -140,3 +140,28 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   min-width: 48px;
   font-size: 1.2rem;
 }
+
+/* Modern green custom scrollbar for leaderboard */
+.leaderboard-scroll::-webkit-scrollbar {
+  width: 10px;
+  background: transparent;
+}
+.leaderboard-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00ff88 60%, #007f44 100%);
+  border-radius: 8px;
+  min-height: 40px;
+  border: 2px solid #000;
+}
+.leaderboard-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00ff88 80%, #00cc66 100%);
+}
+.leaderboard-scroll::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+}
+
+/* For Firefox */
+.leaderboard-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #00ff88 rgba(0,0,0,0.2);
+}
