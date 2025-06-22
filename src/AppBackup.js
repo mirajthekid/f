@@ -869,8 +869,8 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
         </div>
       )}
       {missed && (
-        <>
-          <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', justifyContent: 'center', minHeight: '100vh' }}>
+          <div style={{ color: '#ff4444', fontSize: 20, fontWeight: 700, marginBottom: 24 }}>
             missed!<br />score: {score}
             {avgReaction !== null && (
               <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
@@ -878,14 +878,15 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
               </div>
             )}
           </div>
-          {/* Leaderboard now directly under score, above buttons */}
-          <div style={{ marginTop: 32 }}><Leaderboard game="tapcircle" /></div>
-          <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+            <Leaderboard game="tapcircle" />
+          </div>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', width: '100%' }}>
             <button onPointerDown={startGame} style={buttonStyle}>again</button>
             <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
             <button onPointerDown={onNext} style={buttonStyle}>next game</button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
