@@ -41,9 +41,20 @@ export default function Leaderboard({ game }) {
       ) : (
         <ol style={{ maxWidth: 320, margin: '0 auto', padding: 0, listStyle: 'decimal', color: '#fff', fontSize: 14, overflow: 'auto' }}>
           {scores.map((entry, i) => (
-            <li key={i} style={{ marginBottom: 2, fontWeight: i < 3 ? 700 : 400, color: i < 3 ? '#00ff88' : '#fff', display: 'flex', justifyContent: 'space-between' }}>
+            <li
+              key={i}
+              style={{
+                marginBottom: 2,
+                fontWeight: i < 3 ? 700 : 400,
+                color: i < 3 ? '#00ff88' : '#fff',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 32 // Increased gap between name and score
+              }}
+            >
               <span>{entry.username || 'anon'}</span>
-              <span style={{ color: '#00ff88' }}>{entry.score}{game === 'tapcircle' ? '' : ' ms'}</span>
+              <span style={{ color: '#00ff88', minWidth: 60, textAlign: 'right', display: 'inline-block' }}>{entry.score}{game === 'tapcircle' ? '' : ' ms'}</span>
             </li>
           ))}
         </ol>
