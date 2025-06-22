@@ -5,11 +5,33 @@ import { submitScore } from './firebase';
 
 const UsernameScreen = ({ onSubmit }) => {
   const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
   const inputRef = React.useRef(null);
 
   React.useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
   }, []);
+
+  // Simple bad word filter (multi-language, basic)
+  const badWords = [
+    // English
+    'fuck','shit','bitch','cunt','nigg','fag','asshole','dick','pussy','bastard','slut','whore','retard','cock','cum','twat','wank','douche',
+    // Turkish
+    'amk','siktir','orospu','piç','yarrak','göt','ananı','anan','sikik','mal','salak','aptal','gerizekalı','pezevenk','kahpe','ibne','gavat',
+    // German
+    'arsch','fotze','hurensohn','wichser','scheisse','schlampe','fick',
+    // French
+    'putain','salope','connard','enculé','merde',
+    // Spanish
+    'puta','polla','coño','gilipollas','cabron','mierda',
+    // Russian
+    'блядь','сука','хуй','пизда','ебать','мудак','гандон',
+    // Add more as needed
+  ];
+  function containsBadWord(str) {
+    const lower = str.toLowerCase();
+    return badWords.some(word => lower.includes(word));
+  }
 
   return (
     <div 
@@ -22,7 +44,17 @@ const UsernameScreen = ({ onSubmit }) => {
       <form 
         onSubmit={e => {
           e.preventDefault();
-          if (username.trim()) onSubmit(username);
+          if (!username.trim()) return;
+          if (username.length > 25) {
+            setError('max 25 characters');
+            return;
+          }
+          if (containsBadWord(username)) {
+            setError('no bad words allowed');
+            return;
+          }
+          setError('');
+          onSubmit(username);
         }}
         style={{ display: 'flex', alignItems: 'center', margin: 0, padding: 0 }}
       >
@@ -30,7 +62,9 @@ const UsernameScreen = ({ onSubmit }) => {
           className="input username-input"
           type="text"
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={e => {
+            if (e.target.value.length <= 25) setUsername(e.target.value);
+          }}
           style={{
             fontSize: 10,
             background: '#000',
@@ -56,10 +90,11 @@ const UsernameScreen = ({ onSubmit }) => {
           autoComplete="off"
           inputMode="text"          
           ref={inputRef}
-          maxLength={15}
+          maxLength={25}
           tabIndex={1}
         />
       </form>
+      {error && <div style={{ color: '#ff4444', fontSize: 12, marginLeft: 8 }}>{error}</div>}
     </div>
   );
 };
@@ -751,6 +786,10 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
     const dist = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
     if (dist <= radius) {
       // Success
+      if (popSound) {
+        popSound.currentTime = 0;
+        popSound.play();
+      }
       setScore(s => {
         setScoreBump(true);
         return s + 1;
