@@ -878,13 +878,13 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
               </div>
             )}
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-            <Leaderboard game="tapcircle" />
-          </div>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', width: '100%', marginBottom: 24 }}>
             <button onPointerDown={startGame} style={buttonStyle}>again</button>
             <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
             <button onPointerDown={onNext} style={buttonStyle}>next game</button>
+          </div>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Leaderboard game="tapcircle" />
           </div>
         </div>
       )}
