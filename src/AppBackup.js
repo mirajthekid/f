@@ -679,6 +679,15 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
   const gameAreaRef = React.useRef(null);
   const timeoutRef = React.useRef();
 
+  // Score animation state
+  const [scoreBump, setScoreBump] = useState(false);
+  React.useEffect(() => {
+    if (scoreBump) {
+      const t = setTimeout(() => setScoreBump(false), 180);
+      return () => clearTimeout(t);
+    }
+  }, [scoreBump]);
+
   // Helper to get random position
   function getRandomPosition() {
     const area = gameAreaRef.current?.getBoundingClientRect();
@@ -742,7 +751,10 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
     const dist = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
     if (dist <= radius) {
       // Success
-      setScore(s => s + 1);
+      setScore(s => {
+        setScoreBump(true);
+        return s + 1;
+      });
       const thisReaction = Date.now() - startTime;
       setReaction(thisReaction);
       setReactions(arr => [...arr, thisReaction]); // NEW: add to array
@@ -808,6 +820,34 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
 
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+      {/* Score counter on top center, only number, animates on hit */}
+      {playing && (
+        <div style={{
+          position: 'absolute',
+          top: 24,
+          left: 0,
+          width: '100%',
+          textAlign: 'center',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}>
+          <span
+            style={{
+              fontSize: scoreBump ? 64 : 40,
+              color: '#00ff88',
+              fontWeight: 900,
+              letterSpacing: 1,
+              lineHeight: 1,
+              transition: 'font-size 0.18s cubic-bezier(.4,2,.6,1)',
+              textShadow: '0 0 12px #00ff88, 0 0 2px #00ff88',
+              userSelect: 'none',
+              fontFamily: 'Roboto, sans-serif',
+            }}
+          >
+            {score}
+          </span>
+        </div>
+      )}
       {(!playing && !missed) && (
         <>
           <div style={{ color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 8, textAlign: 'center', textShadow: '0 0 3px #00ff88' }}>
