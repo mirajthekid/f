@@ -750,7 +750,7 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
       setReaction(thisReaction);
       setReactions(arr => [...arr, thisReaction]); // NEW: add to array
       // Speed up, but not too fast
-      setTimeoutMs(ms => Math.max(minTimeout, ms - 60));
+      // setTimeoutMs(ms => Math.max(minTimeout, ms - 60)); // DISABLED: keep speed constant
       showCircle();
     } else {
       // Missed
