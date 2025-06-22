@@ -675,7 +675,7 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
   const [reactions, setReactions] = useState([]); // NEW: store all reaction times
   const minTimeout = 1000; // was 400
   const maxTimeout = 1800; // was 1000
-  const radius = 32; // was 28
+  const radius = 48; // was 32, increased for bigger circles
   const gameAreaRef = React.useRef(null);
   const timeoutRef = React.useRef();
 
