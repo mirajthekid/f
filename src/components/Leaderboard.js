@@ -33,27 +33,24 @@ export default function Leaderboard({ game }) {
       }}
     >
       <h2 style={{ color: '#00ff88', fontSize: 18, margin: '0 0 8px 0', fontWeight: 700, letterSpacing: 1 }}>Leaderboard</h2>
-      <div style={{ marginBottom: 8, color: '#fff', fontSize: 14 }}>
-        Top 50 for <b>{game}</b>
-      </div>
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <ol style={{ maxWidth: 320, margin: '0 auto', padding: 0, listStyle: 'decimal', color: '#fff', fontSize: 14, overflow: 'auto' }}>
+        <ol style={{ maxWidth: 320, margin: '0 auto', padding: 0, listStyle: 'none', color: '#fff', fontSize: 14, overflow: 'auto' }}>
           {scores.map((entry, i) => (
             <li
               key={i}
               style={{
-                marginBottom: 2,
+                marginBottom: 4,
                 fontWeight: i < 3 ? 700 : 400,
                 color: i < 3 ? '#00ff88' : '#fff',
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: 32 // Increased gap between name and score
+                gap: 48 // More space between name and score
               }}
             >
-              <span>{entry.username || 'anon'}</span>
+              <span style={{ minWidth: 24, textAlign: 'right', marginRight: 8, color: '#00ff88', fontWeight: 700 }}>{i + 1}.</span>
+              <span style={{ flex: 1 }}>{entry.username || 'anon'}</span>
               <span style={{ color: '#00ff88', minWidth: 60, textAlign: 'right', display: 'inline-block' }}>{entry.score}{game === 'tapcircle' ? '' : ' ms'}</span>
             </li>
           ))}
