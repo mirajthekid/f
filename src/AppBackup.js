@@ -820,26 +820,26 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
 
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-      {/* Score counter on top center, only number, animates on hit */}
+      {/* Score counter in the center, transparent, only number, animates on hit */}
       {playing && (
         <div style={{
           position: 'absolute',
-          top: 24,
-          left: 0,
-          width: '100%',
-          textAlign: 'center',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           zIndex: 10,
           pointerEvents: 'none',
         }}>
           <span
             style={{
-              fontSize: scoreBump ? 64 : 40,
+              fontSize: scoreBump ? 96 : 56,
               color: '#00ff88',
               fontWeight: 900,
               letterSpacing: 1,
               lineHeight: 1,
-              transition: 'font-size 0.18s cubic-bezier(.4,2,.6,1)',
-              textShadow: '0 0 12px #00ff88, 0 0 2px #00ff88',
+              opacity: 0.18,
+              transition: 'font-size 0.18s cubic-bezier(.4,2,.6,1), opacity 0.2s',
+              textShadow: '0 0 24px #00ff88, 0 0 2px #00ff88',
               userSelect: 'none',
               fontFamily: 'Roboto, sans-serif',
             }}
