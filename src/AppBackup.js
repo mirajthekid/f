@@ -878,6 +878,7 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
               </div>
             )}
           </div>
+          {/* Leaderboard now directly under score, above buttons */}
           <div style={{ marginTop: 32 }}><Leaderboard game="tapcircle" /></div>
           <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
             <button onPointerDown={startGame} style={buttonStyle}>again</button>
