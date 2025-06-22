@@ -742,7 +742,10 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
     const dist = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
     if (dist <= radius) {
       // Success
-      setScore(s => s + 1);
+      setScore(s => {
+        setScoreBump && setScoreBump(true);
+        return s + 1;
+      });
       const thisReaction = Date.now() - startTime;
       setReaction(thisReaction);
       setReactions(arr => [...arr, thisReaction]); // NEW: add to array
@@ -806,6 +809,15 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
     // eslint-disable-next-line
   }, [missed, score, username]);
 
+  // Score animation state
+  const [scoreBump, setScoreBump] = useState(false);
+  React.useEffect(() => {
+    if (scoreBump) {
+      const t = setTimeout(() => setScoreBump(false), 180);
+      return () => clearTimeout(t);
+    }
+  }, [scoreBump]);
+
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       {(!playing && !missed) && (
@@ -815,6 +827,33 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
           </div>
           <button onPointerDown={startGame} style={{ marginTop: 32, ...buttonStyle }}>start</button>
         </>
+      )}
+      {playing && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}>
+          <span
+            style={{
+              fontSize: scoreBump ? 96 : 56,
+              color: '#00ff88',
+              fontWeight: 900,
+              letterSpacing: 1,
+              lineHeight: 1,
+              opacity: 0.18,
+              transition: 'font-size 0.18s cubic-bezier(.4,2,.6,1), opacity 0.2s',
+              textShadow: '0 0 24px #00ff88, 0 0 2px #00ff88',
+              userSelect: 'none',
+              fontFamily: 'Roboto, sans-serif',
+            }}
+          >
+            {score}
+          </span>
+        </div>
       )}
       {playing && (
         <div 
@@ -838,12 +877,12 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
               </div>
             )}
           </div>
-          <div style={{ marginTop: 32 }}><Leaderboard game="tapcircle" /></div>
           <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
             <button onPointerDown={startGame} style={buttonStyle}>again</button>
             <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
             <button onPointerDown={onNext} style={buttonStyle}>next game</button>
           </div>
+          <div style={{ marginTop: 32 }}><Leaderboard game="tapcircle" /></div>
         </>
       )}
     </div>

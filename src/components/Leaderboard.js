@@ -53,7 +53,7 @@ export default function Leaderboard({ game }) {
                 gap: 32 // Increased gap between name and score
               }}
             >
-              <span>{entry.username || 'anon'}</span>
+              <span style={{minWidth: 120, display: 'inline-block'}}>{entry.username || 'anon'}</span>
               <span style={{ color: '#00ff88', minWidth: 60, textAlign: 'right', display: 'inline-block' }}>{entry.score}{game === 'tapcircle' ? '' : ' ms'}</span>
             </li>
           ))}
