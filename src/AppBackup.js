@@ -5,33 +5,11 @@ import { submitScore } from './firebase';
 
 const UsernameScreen = ({ onSubmit }) => {
   const [username, setUsername] = useState('');
-  const [error, setError] = useState('');
   const inputRef = React.useRef(null);
 
   React.useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
   }, []);
-
-  // Simple bad word filter (multi-language, basic)
-  const badWords = [
-    // English
-    'fuck','shit','bitch','cunt','nigg','fag','asshole','dick','pussy','bastard','slut','whore','retard','cock','cum','twat','wank','douche',
-    // Turkish
-    'amk','siktir','orospu','piç','yarrak','göt','ananı','anan','sikik','mal','salak','aptal','gerizekalı','pezevenk','kahpe','ibne','gavat',
-    // German
-    'arsch','fotze','hurensohn','wichser','scheisse','schlampe','fick',
-    // French
-    'putain','salope','connard','enculé','merde',
-    // Spanish
-    'puta','polla','coño','gilipollas','cabron','mierda',
-    // Russian
-    'блядь','сука','хуй','пизда','ебать','мудак','гандон',
-    // Add more as needed
-  ];
-  function containsBadWord(str) {
-    const lower = str.toLowerCase();
-    return badWords.some(word => lower.includes(word));
-  }
 
   return (
     <div 
@@ -44,17 +22,7 @@ const UsernameScreen = ({ onSubmit }) => {
       <form 
         onSubmit={e => {
           e.preventDefault();
-          if (!username.trim()) return;
-          if (username.length > 25) {
-            setError('max 25 characters');
-            return;
-          }
-          if (containsBadWord(username)) {
-            setError('no bad words allowed');
-            return;
-          }
-          setError('');
-          onSubmit(username);
+          if (username.trim()) onSubmit(username);
         }}
         style={{ display: 'flex', alignItems: 'center', margin: 0, padding: 0 }}
       >
@@ -62,9 +30,7 @@ const UsernameScreen = ({ onSubmit }) => {
           className="input username-input"
           type="text"
           value={username}
-          onChange={e => {
-            if (e.target.value.length <= 25) setUsername(e.target.value);
-          }}
+          onChange={e => setUsername(e.target.value)}
           style={{
             fontSize: 10,
             background: '#000',
@@ -90,11 +56,10 @@ const UsernameScreen = ({ onSubmit }) => {
           autoComplete="off"
           inputMode="text"          
           ref={inputRef}
-          maxLength={25}
+          maxLength={15}
           tabIndex={1}
         />
       </form>
-      {error && <div style={{ color: '#ff4444', fontSize: 12, marginLeft: 8 }}>{error}</div>}
     </div>
   );
 };
@@ -714,15 +679,6 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
   const gameAreaRef = React.useRef(null);
   const timeoutRef = React.useRef();
 
-  // Score animation state
-  const [scoreBump, setScoreBump] = useState(false);
-  React.useEffect(() => {
-    if (scoreBump) {
-      const t = setTimeout(() => setScoreBump(false), 180);
-      return () => clearTimeout(t);
-    }
-  }, [scoreBump]);
-
   // Helper to get random position
   function getRandomPosition() {
     const area = gameAreaRef.current?.getBoundingClientRect();
@@ -786,14 +742,7 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
     const dist = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
     if (dist <= radius) {
       // Success
-      if (popSound) {
-        popSound.currentTime = 0;
-        popSound.play();
-      }
-      setScore(s => {
-        setScoreBump(true);
-        return s + 1;
-      });
+      setScore(s => s + 1);
       const thisReaction = Date.now() - startTime;
       setReaction(thisReaction);
       setReactions(arr => [...arr, thisReaction]); // NEW: add to array
@@ -859,34 +808,6 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
 
   return (
     <div className="app-bg center fade-in" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-      {/* Score counter in the center, transparent, only number, animates on hit */}
-      {playing && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 10,
-          pointerEvents: 'none',
-        }}>
-          <span
-            style={{
-              fontSize: scoreBump ? 96 : 56,
-              color: '#00ff88',
-              fontWeight: 900,
-              letterSpacing: 1,
-              lineHeight: 1,
-              opacity: 0.18,
-              transition: 'font-size 0.18s cubic-bezier(.4,2,.6,1), opacity 0.2s',
-              textShadow: '0 0 24px #00ff88, 0 0 2px #00ff88',
-              userSelect: 'none',
-              fontFamily: 'Roboto, sans-serif',
-            }}
-          >
-            {score}
-          </span>
-        </div>
-      )}
       {(!playing && !missed) && (
         <>
           <div style={{ color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 8, textAlign: 'center', textShadow: '0 0 3px #00ff88' }}>
@@ -908,8 +829,8 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
         </div>
       )}
       {missed && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', justifyContent: 'center', minHeight: '100vh' }}>
-          <div style={{ color: '#ff4444', fontSize: 20, fontWeight: 700, marginBottom: 24 }}>
+        <>
+          <div style={{ marginTop: 32, color: '#ff4444', fontSize: 20, fontWeight: 700 }}>
             missed!<br />score: {score}
             {avgReaction !== null && (
               <div style={{ color: '#00ff88', fontSize: 16, marginTop: 8 }}>
@@ -917,15 +838,13 @@ const TapTheCircleGame = ({ onBack, onNext, username, onShowLeaderboard }) => {
               </div>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', width: '100%', marginBottom: 24 }}>
+          <div style={{ marginTop: 32 }}><Leaderboard game="tapcircle" /></div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 32, justifyContent: 'center' }}>
             <button onPointerDown={startGame} style={buttonStyle}>again</button>
             <button onPointerDown={onBack} style={buttonStyle}>previous game</button>
             <button onPointerDown={onNext} style={buttonStyle}>next game</button>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <Leaderboard game="tapcircle" />
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
